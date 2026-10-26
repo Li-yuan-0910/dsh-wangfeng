@@ -19,7 +19,7 @@ window.__ModuleLoader__.load({
     const LEVEL = ['休息', '低强度', '中强度', '高强度']
 
     const CSS = `
-[data-wf]{display:flex;flex-direction:column;gap:14px;padding:2px 0 8px;}
+[data-wf]{display:flex;flex-direction:column;gap:14px;padding:16px;border:1px solid rgba(127,127,127,.2);border-radius:14px;background:var(--dsw-alias-bg-layer-1,var(--dsw-alias-bg-base,#fff));color:var(--dsw-alias-label-primary,inherit);}
 [data-wf-head]{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
 [data-wf-title]{font-size:20px;font-weight:650;line-height:1.2;margin:0;}
 [data-wf-title small]{font-size:10px;letter-spacing:2.4px;color:rgba(127,127,127,.75);font-weight:500;margin-left:7px;vertical-align:2px;}
@@ -32,13 +32,21 @@ window.__ModuleLoader__.load({
 [data-wf-row]{display:flex;justify-content:space-between;gap:10px;font-size:13px;padding:6px 0;border-top:1px dashed rgba(127,127,127,.2);}
 [data-wf-row]:first-child{border-top:0;}
 [data-wf-row i]{font-style:normal;color:rgba(127,127,127,.95);white-space:nowrap;font-variant-numeric:tabular-nums;}
-[data-wf-btn]{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:40px;padding:0 18px;border-radius:10px;background:#2f7d5a;color:#fff;font-size:14px;font-weight:550;text-decoration:none;border:0;cursor:pointer;align-self:flex-start;}
+[data-wf-btn]{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:40px;padding:0 18px;border-radius:10px;background:#2f7d5a;color:#fff;font-size:14px;font-family:inherit;font-weight:550;text-decoration:none;border:0;cursor:pointer;align-self:flex-start;}
 [data-wf-btn]:hover{background:#286b4d;color:#fff;}
-[data-wf-btn-small]{height:30px;padding:0 12px;font-size:12px;border-radius:8px;display:inline-flex;align-items:center;gap:6px;background:#2f7d5a;color:#fff;text-decoration:none;margin-left:8px;}
+[data-wf-btn-small]{height:30px;padding:0 12px;font-size:12px;font-family:inherit;border-radius:8px;display:inline-flex;align-items:center;gap:6px;background:#2f7d5a;color:#fff;text-decoration:none;border:0;cursor:pointer;margin-left:8px;}
 [data-wf-btn-small]:hover{background:#286b4d;color:#fff;}
 [data-wf-note]{font-size:11px;color:rgba(127,127,127,.8);line-height:1.6;}
 [data-wf-empty]{font-size:12px;color:rgba(127,127,127,.9);padding:8px 0;}
 [data-wf-loading]{font-size:12px;color:rgba(127,127,127,.85);padding:16px 0;}
+[data-wf-overlay]{position:fixed;inset:0;z-index:2147483000;display:flex;flex-direction:column;background:#0f1216;}
+[data-wf-overlay-bar]{height:46px;display:flex;align-items:center;gap:12px;padding:0 14px;background:#171b21;color:#fff;font-size:13px;flex:0 0 auto;}
+[data-wf-overlay-title]{font-weight:600;margin-right:auto;}
+[data-wf-overlay-link]{color:#9ad2b5;text-decoration:none;font-size:12px;}
+[data-wf-overlay-link:hover]{text-decoration:underline;}
+[data-wf-overlay-close]{height:30px;padding:0 14px;border-radius:8px;border:0;background:#2f7d5a;color:#fff;font-size:12px;font-family:inherit;cursor:pointer;}
+[data-wf-overlay-close]:hover{background:#286b4d;}
+[data-wf-frame]{flex:1;width:100%;border:0;background:#f5f6f8;}
 `
 
     function pad(n) {
@@ -69,6 +77,7 @@ window.__ModuleLoader__.load({
 
     function Panel() {
       const [state, setState] = React.useState({ loading: true, error: '', snap: null })
+      const [preview, setPreview] = React.useState(false)
       React.useEffect(() => {
         let alive = true
         fetch(API, { cache: 'no-store' })
@@ -123,8 +132,13 @@ window.__ModuleLoader__.load({
             ),
           ),
           h(
-            'a',
-            { 'data-wf-btn-small': '', href: PAGE, target: '_blank', rel: 'noopener' },
+            'button',
+            {
+              'data-wf-btn-small': '',
+              type: 'button',
+              onClick: () => setPreview(true),
+              title: '在设置里打开望峰页面',
+            },
             '打开望峰 ↗',
           ),
         ),
@@ -184,8 +198,12 @@ window.__ModuleLoader__.load({
                   : h('div', { 'data-wf-empty': '' }, '今天还没记训练。'),
 
                 h(
-                  'a',
-                  { 'data-wf-btn': '', href: PAGE, target: '_blank', rel: 'noopener' },
+                  'button',
+                  {
+                    'data-wf-btn': '',
+                    type: 'button',
+                    onClick: () => setPreview(true),
+                  },
                   '打开望峰 · 热力图与最佳表现',
                 ),
                 h(
@@ -194,6 +212,28 @@ window.__ModuleLoader__.load({
                   '全部 ' + snap.prs.length + ' 个动作在册 · 网页只读，记东西直接跟我说。',
                 ),
               ),
+        preview
+          ? h(
+              'div',
+              { 'data-wf-overlay': '' },
+              h(
+                'div',
+                { 'data-wf-overlay-bar': '' },
+                h('span', { 'data-wf-overlay-title': '' }, '望峰 · Ascent'),
+                h(
+                  'a',
+                  { 'data-wf-overlay-link': '', href: PAGE, target: '_blank', rel: 'noopener' },
+                  '在新窗口打开',
+                ),
+                h(
+                  'button',
+                  { 'data-wf-overlay-close': '', type: 'button', onClick: () => setPreview(false) },
+                  '关闭',
+                ),
+              ),
+              h('iframe', { 'data-wf-frame': '', src: PAGE, title: '望峰' }),
+            )
+          : null,
       )
     }
 

@@ -60,7 +60,7 @@ const log = tools.get('wangfeng_log')
 assert.ok(log.output && typeof log.output.render === 'function', '工具必须声明 output')
 
 const result = await log.execute({
-  date: '2026-10-26',
+  date: '2026-10-01',
   sleep: { durationMin: 432, quality: 3, awakeCount: 0, remMin: 95, lightMin: 250, deepMin: 60 },
   intensity: 2,
   intensityEstimated: true,
@@ -84,7 +84,7 @@ const rendered = log.output.render({}, result)
 assert.equal(rendered[0].type, 'text')
 assert.ok(rendered[0].text.includes('大剪刀机单臂'))
 
-const status = await tools.get('wangfeng_status').execute({ date: '2026-10-26' })
+const status = await tools.get('wangfeng_status').execute({ date: '2026-10-01' })
 assert.ok(status.summary.includes('今天'))
 assert.ok(status.summary.includes('最佳'))
 assert.equal(status.prs.length, 2)
