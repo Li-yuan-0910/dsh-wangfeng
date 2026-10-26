@@ -1,0 +1,16 @@
+# 依赖与构建
+node_modules/
+
+# 本地示例数据（npm run seed:demo 生成）
+.demo-data/
+
+# 系统与编辑器
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+.vscode/
+.idea/
+
+# 本地截图
+shots/

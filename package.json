@@ -1,0 +1,71 @@
+{
+  "name": "dsh-wangfeng",
+  "version": "0.1.0",
+  "description": "望峰（Ascent）：睡眠、训练强度、动作组数与最佳表现，一张只读网页看全；数据只在本机。",
+  "license": "MIT",
+  "author": "Li-yuan-0910 (https://github.com/Li-yuan-0910)",
+  "type": "module",
+  "main": "index.js",
+  "icon": "./icon.svg",
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "index.js",
+    "lib",
+    "web",
+    "client.js",
+    "cordis.patch.yml",
+    "icon.svg",
+    "README.md",
+    "DESIGN.md",
+    "CHANGELOG.md",
+    "LICENSE",
+    "assets",
+    "tools"
+  ],
+  "scripts": {
+    "test": "node tools/test-pr.mjs && node tools/test-store.mjs && node tools/test-host.mjs",
+    "seed:demo": "node tools/seed-demo.mjs",
+    "demo": "npm run seed:demo && node tools/dev-server.mjs --demo",
+    "dev": "node tools/dev-server.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Li-yuan-0910/dsh-wangfeng.git"
+  },
+  "homepage": "https://github.com/Li-yuan-0910/dsh-wangfeng#readme",
+  "bugs": {
+    "url": "https://github.com/Li-yuan-0910/dsh-wangfeng/issues"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "inject": [
+        "@deepseek-ai/dsh-client-runtime",
+        "@deepseek-ai/dsh-client-ui-settings",
+        "@deepseek-ai/dsh-client-ui-settings-plugins",
+        "@deepseek-ai/dsh-client-ui-plugin-manager"
+      ]
+    }
+  },
+  "keywords": [
+    "deepseek-harness",
+    "dsh",
+    "dsh-plugin",
+    "ascent",
+    "fitness",
+    "sleep",
+    "workout",
+    "heatmap"
+  ]
+}

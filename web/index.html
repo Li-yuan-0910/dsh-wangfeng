@@ -1,0 +1,783 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>望峰 · Ascent</title>
+<style>
+  :root {
+    --bg: #f5f6f8;
+    --card: #ffffff;
+    --ink: #1b1f24;
+    --muted: #6b7280;
+    --faint: #9aa3ad;
+    --line: #e6e8eb;
+    --soft: #f0f2f5;
+    --accent: #2f7d5a;
+    --accent-soft: #e7f2ec;
+    --amber: #d9a441;
+    --l0: #e9ecf0;
+    --l1: #6fbf73;
+    --l2: #e8b53c;
+    --l3: #d9534f;
+    --deep: #3f5f9e;
+    --light: #7fa3e0;
+    --rem: #9b7fd4;
+    --awake: #d9a441;
+    --shadow: 0 1px 2px rgba(16, 24, 40, .04), 0 8px 24px rgba(16, 24, 40, .04);
+    --radius: 16px;
+  }
+  html[data-theme="dark"] {
+    --bg: #0f1216;
+    --card: #171b21;
+    --ink: #e8eaed;
+    --muted: #9aa3ad;
+    --faint: #6f7883;
+    --line: #262b33;
+    --soft: #1e232b;
+    --accent: #6fbf8f;
+    --accent-soft: #1b2a23;
+    --amber: #e0b45a;
+    --l0: #242a32;
+    --l1: #4fae6a;
+    --l2: #c9a13b;
+    --l3: #cf574d;
+    --deep: #5b7fd4;
+    --light: #8fb0e8;
+    --rem: #ab8fe0;
+    --awake: #e0b45a;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 12px 30px rgba(0, 0, 0, .18);
+  }
+  @media (prefers-color-scheme: dark) {
+    html[data-theme="auto"] {
+      --bg: #0f1216;
+      --card: #171b21;
+      --ink: #e8eaed;
+      --muted: #9aa3ad;
+      --faint: #6f7883;
+      --line: #262b33;
+      --soft: #1e232b;
+      --accent: #6fbf8f;
+      --accent-soft: #1b2a23;
+      --amber: #e0b45a;
+      --l0: #242a32;
+      --l1: #4fae6a;
+      --l2: #c9a13b;
+      --l3: #cf574d;
+      --deep: #5b7fd4;
+      --light: #8fb0e8;
+      --rem: #ab8fe0;
+      --awake: #e0b45a;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 12px 30px rgba(0, 0, 0, .18);
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font: 14px/1.55 "PingFang SC", "Microsoft YaHei", "Noto Sans SC", system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    padding: 28px 20px 64px;
+  }
+  [hidden] { display: none !important; }
+  .wrap { max-width: 1040px; margin: 0 auto; }
+  .muted { color: var(--muted); }
+  .faint { color: var(--faint); }
+  .num { font-variant-numeric: tabular-nums; }
+
+  /* 顶部 */
+  header.top { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 22px; }
+  .brand { display: flex; align-items: center; gap: 14px; }
+  .mark { width: 44px; height: 44px; color: var(--accent); flex: 0 0 auto; }
+  h1 { font-size: 24px; line-height: 1.1; margin: 0; letter-spacing: .5px; font-weight: 650; }
+  h1 span { font-size: 11px; letter-spacing: 3px; color: var(--faint); font-weight: 500; margin-left: 8px; vertical-align: 3px; }
+  #today-line { margin: 5px 0 0; color: var(--muted); font-size: 13px; }
+  .actions { display: flex; gap: 8px; }
+  .icon-btn {
+    width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--line);
+    background: var(--card); color: var(--muted); font-size: 16px; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
+    transition: .15s ease;
+  }
+  .icon-btn:hover { color: var(--ink); border-color: var(--faint); }
+  .icon-btn.spin { animation: spin .8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* 概览 */
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 14px; }
+  .stat { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; box-shadow: var(--shadow); }
+  .stat b { display: block; font-size: 24px; line-height: 1.15; font-weight: 650; font-variant-numeric: tabular-nums; }
+  .stat span { display: block; margin-top: 3px; font-size: 12px; color: var(--muted); }
+
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; margin-bottom: 14px; }
+  .card-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+  .card-head h2 { font-size: 15px; margin: 0; font-weight: 650; letter-spacing: .3px; }
+  .card-head .sub { font-size: 12px; color: var(--muted); }
+
+  /* 睡眠 */
+  .sleep-top { display: flex; align-items: flex-end; gap: 18px; flex-wrap: wrap; }
+  .sleep-big { font-size: 40px; line-height: 1; font-weight: 650; letter-spacing: -.5px; font-variant-numeric: tabular-nums; }
+  .sleep-big small { font-size: 14px; font-weight: 500; color: var(--muted); margin-left: 8px; letter-spacing: 0; }
+  .sleep-meta { display: flex; flex-direction: column; gap: 3px; padding-bottom: 3px; }
+  .stars { color: var(--amber); letter-spacing: 2px; font-size: 15px; }
+  .stars .off { color: var(--line); }
+  .quality { font-size: 12px; color: var(--muted); }
+  .sleep-bar { display: flex; height: 14px; border-radius: 7px; overflow: hidden; background: var(--soft); margin: 20px 0 10px; }
+  .sleep-bar i { display: block; height: 100%; }
+  .sleep-bar i.deep { background: var(--deep); }
+  .sleep-bar i.light { background: var(--light); }
+  .sleep-bar i.rem { background: var(--rem); }
+  .sleep-bar i.awake { background: var(--awake); }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 12px; color: var(--muted); }
+  .legend i { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 6px; vertical-align: 1px; }
+  .legend b { color: var(--ink); font-weight: 550; }
+  .nights { display: flex; align-items: flex-end; gap: 10px; margin-top: 6px; }
+  .nights-title { font-size: 11px; color: var(--faint); margin-top: 16px; }
+  .night { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; min-width: 0; }
+  .night .bar { width: 100%; max-width: 30px; height: 40px; display: flex; align-items: flex-end; background: var(--soft); border-radius: 4px; }
+  .night .bar i { display: block; width: 100%; background: var(--accent); opacity: .32; border-radius: 4px; min-height: 0; }
+  .night.today .bar i { opacity: .95; }
+  .night .lab { font-size: 11px; color: var(--faint); }
+  .night .val { font-size: 10px; color: var(--faint); font-variant-numeric: tabular-nums; }
+
+  /* 热力图 */
+  .heat-scroll { overflow-x: auto; padding-bottom: 2px; }
+  .heat-inner { min-width: 340px; }
+  .months { display: grid; grid-template-columns: repeat(13, 1fr); gap: 6px; margin-bottom: 6px; padding-left: 30px; }
+  .months span { font-size: 11px; color: var(--muted); white-space: nowrap; }
+  .heat-body { display: flex; gap: 8px; }
+  .weekdays { display: grid; grid-template-rows: repeat(7, 1fr); gap: 6px; width: 22px; flex: 0 0 auto; }
+  .weekdays span { font-size: 10px; color: var(--faint); display: flex; align-items: center; }
+  .heat-grid { flex: 1; display: grid; grid-template-columns: repeat(13, 1fr); grid-template-rows: repeat(7, 1fr); grid-auto-flow: column; gap: 6px; max-width: 660px; }
+  .cell { aspect-ratio: 1; border-radius: 5px; background: var(--l0); cursor: pointer; transition: transform .12s ease, box-shadow .12s ease; position: relative; }
+  .cell:hover { transform: scale(1.12); box-shadow: 0 0 0 2px var(--card), 0 0 0 3px var(--faint); z-index: 2; }
+  .cell.l1 { background: var(--l1); }
+  .cell.l2 { background: var(--l2); }
+  .cell.l3 { background: var(--l3); }
+  .cell.today { box-shadow: inset 0 0 0 2px var(--ink); }
+  .cell.void { background: transparent; cursor: default; pointer-events: none; }
+  .heat-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 14px; flex-wrap: wrap; }
+  .heat-legend { display: flex; align-items: center; gap: 14px; font-size: 11px; color: var(--muted); }
+  .heat-legend span { display: inline-flex; align-items: center; gap: 5px; }
+  .heat-legend i { width: 11px; height: 11px; border-radius: 3px; display: inline-block; }
+
+  /* 最近三天 */
+  .days { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; align-items: stretch; }
+  .day { border: 1px solid var(--line); border-radius: 14px; padding: 14px; cursor: pointer; background: var(--card); transition: border-color .15s ease, transform .15s ease; min-width: 0; }
+  .day:hover { border-color: var(--faint); transform: translateY(-1px); }
+  .day.empty { border-style: dashed; box-shadow: none; cursor: default; }
+  .day.empty:hover { transform: none; border-color: var(--line); }
+  .day-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
+  .day-name { font-size: 13px; font-weight: 600; }
+  .day-date { font-size: 11px; color: var(--faint); margin-left: 6px; font-weight: 400; }
+  .chip { font-size: 11px; padding: 2px 8px; border-radius: 99px; color: var(--muted); background: var(--soft); white-space: nowrap; }
+  .chip.l1 { color: #2d6b34; background: color-mix(in srgb, var(--l1) 22%, transparent); }
+  .chip.l2 { color: #7a5a10; background: color-mix(in srgb, var(--l2) 24%, transparent); }
+  .chip.l3 { color: #8d2a26; background: color-mix(in srgb, var(--l3) 20%, transparent); }
+  html[data-theme="dark"] .chip.l1, html[data-theme="dark"] .chip.l2, html[data-theme="dark"] .chip.l3 { color: var(--ink); }
+  @media (prefers-color-scheme: dark) {
+    html[data-theme="auto"] .chip.l1, html[data-theme="auto"] .chip.l2, html[data-theme="auto"] .chip.l3 { color: var(--ink); }
+    html[data-theme="auto"] .delta.up { color: #8fdcab; }
+    html[data-theme="auto"] .delta.down { color: #f0a09a; }
+  }
+  .workout-name { font-size: 12px; color: var(--muted); margin: 8px 0 4px; display: flex; justify-content: space-between; gap: 8px; }
+  .exercise { display: flex; justify-content: space-between; gap: 10px; padding: 4px 0; border-top: 1px dashed var(--line); font-size: 12px; }
+  .exercise:first-of-type { border-top: 0; }
+  .exercise .m { color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .exercise .v { color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .day-note { font-size: 11px; color: var(--faint); margin-top: 8px; }
+  .rest { font-size: 12px; color: var(--faint); padding: 6px 0 2px; }
+
+  /* 最佳表现 */
+  .pr { width: 100%; border-collapse: collapse; }
+  .pr th { text-align: left; font-size: 11px; color: var(--faint); font-weight: 500; padding: 0 8px 8px; white-space: nowrap; }
+  .pr th:last-child, .pr td:last-child { text-align: right; }
+  .pr td { padding: 11px 8px; border-top: 1px solid var(--line); vertical-align: top; }
+  .pr td.mv { font-weight: 550; white-space: nowrap; }
+  .pr .set { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .pr .sub { font-size: 11px; color: var(--faint); margin-top: 2px; white-space: nowrap; }
+  .pr .date { color: var(--muted); font-size: 12px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .delta { display: inline-block; font-size: 12px; padding: 2px 8px; border-radius: 99px; background: var(--soft); color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .delta.up { color: #2d6b34; background: var(--accent-soft); }
+  .delta.down { color: #8d2a26; background: color-mix(in srgb, var(--l3) 14%, transparent); }
+  html[data-theme="dark"] .delta.up { color: #8fdcab; }
+  html[data-theme="dark"] .delta.down { color: #f0a09a; }
+  .more { margin-top: 12px; text-align: center; }
+  .link-btn { background: none; border: 0; color: var(--accent); font-size: 12px; cursor: pointer; padding: 6px 10px; }
+  .link-btn:hover { text-decoration: underline; }
+
+  /* 提示 / 弹层 */
+  .tip { position: fixed; z-index: 50; pointer-events: none; background: var(--ink); color: var(--bg); font-size: 12px; line-height: 1.5; padding: 8px 10px; border-radius: 8px; max-width: 260px; box-shadow: 0 8px 24px rgba(0,0,0,.18); opacity: 0; transform: translateY(4px); transition: opacity .12s ease, transform .12s ease; }
+  .tip.show { opacity: 1; transform: none; }
+  .modal { position: fixed; inset: 0; z-index: 60; display: flex; align-items: center; justify-content: center; padding: 20px; background: rgba(10, 12, 16, .42); backdrop-filter: blur(2px); }
+  .modal-box { background: var(--card); color: var(--ink); border: 1px solid var(--line); border-radius: 18px; width: min(560px, 100%); max-height: min(80vh, 720px); overflow: auto; padding: 22px; box-shadow: 0 24px 60px rgba(0,0,0,.25); }
+  .modal-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+  .modal-head h3 { margin: 0; font-size: 18px; font-weight: 650; }
+  .modal-head p { margin: 3px 0 0; font-size: 12px; color: var(--muted); }
+  .modal section { margin-top: 18px; }
+  .modal h4 { margin: 0 0 8px; font-size: 12px; color: var(--muted); font-weight: 550; letter-spacing: .4px; }
+  .modal .ex-row { display: flex; justify-content: space-between; gap: 12px; padding: 7px 0; border-top: 1px dashed var(--line); font-size: 13px; }
+  .modal .ex-row:first-of-type { border-top: 0; }
+  .modal .ex-row .v { color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+  footer { margin-top: 22px; display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-size: 11px; color: var(--faint); }
+  footer a { color: var(--faint); text-decoration: none; border-bottom: 1px dotted var(--faint); }
+  footer a:hover { color: var(--muted); }
+
+  .empty-state { text-align: center; padding: 26px 10px; color: var(--muted); font-size: 13px; }
+  .empty-state b { display: block; color: var(--ink); font-size: 15px; margin-bottom: 4px; }
+  .error { border-color: color-mix(in srgb, var(--l3) 40%, var(--line)); }
+  .skeleton { color: var(--faint); font-size: 13px; padding: 18px 0; }
+
+  @media (max-width: 760px) {
+    body { padding: 18px 12px 48px; }
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .days { grid-template-columns: 1fr; }
+    .heat-inner { min-width: 0; }
+    .heat-grid { max-width: none; gap: 4px; }
+    .months { gap: 4px; }
+    .sleep-big { font-size: 32px; }
+    .pr .hide-sm { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <svg class="mark" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+        <path d="M4 38 L18 15 L27 29 L33 21 L44 38 Z" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/>
+        <circle cx="35" cy="11" r="3.4" fill="currentColor"/>
+      </svg>
+      <div>
+        <h1>望峰 <span>ASCENT</span></h1>
+        <p id="today-line">正在读取…</p>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="icon-btn" id="theme" type="button" title="切换深浅色">◐</button>
+      <button class="icon-btn" id="refresh" type="button" title="刷新">↻</button>
+    </div>
+  </header>
+
+  <section class="stats" id="stats" aria-label="概览">
+    <div class="stat"><b class="skeleton">—</b><span>本周训练</span></div>
+    <div class="stat"><b class="skeleton">—</b><span>连续</span></div>
+    <div class="stat"><b class="skeleton">—</b><span>本周时长</span></div>
+    <div class="stat"><b class="skeleton">—</b><span>动作</span></div>
+  </section>
+
+  <section class="card" id="sleep" aria-label="睡眠"></section>
+  <section class="card" id="heat" aria-label="最近三个月"></section>
+  <section class="card" id="recent" aria-label="最近三天"></section>
+  <section class="card" id="prs" aria-label="最佳表现"></section>
+
+  <footer>
+    <span id="foot-left">数据只在这台电脑上 · ~/.dsh/wangfeng/</span>
+    <span id="foot-right">只读页面 · 最后更新 —</span>
+  </footer>
+</div>
+
+<div class="tip" id="tip" role="tooltip"></div>
+<div class="modal" id="modal" hidden>
+  <div class="modal-box" id="modal-box" role="dialog" aria-modal="true" aria-label="当天的记录"></div>
+</div>
+
+<script>
+(function () {
+  'use strict'
+
+  var API = '/dsh-wangfeng/api/snapshot?days=120'
+  var WEEK = ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+  var WEEK_SHORT = ['一', '二', '三', '四', '五', '六', '日']
+  var LEVEL = ['休息', '低强度', '中强度', '高强度']
+  var QUALITY = ['没打分', '睡得很差', '没睡好', '还算行', '睡得不错', '睡得很好']
+
+  var state = { snap: null, byDate: {}, showAllPrs: false, loading: false }
+  var tip = document.getElementById('tip')
+  var modal = document.getElementById('modal')
+  var modalBox = document.getElementById('modal-box')
+
+  function esc(value) {
+    return String(value === null || value === undefined ? '' : value).replace(/[&<>"']/g, function (ch) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]
+    })
+  }
+  function pad(n) { return String(n).padStart(2, '0') }
+  function parseKey(key) { var p = key.split('-').map(Number); return new Date(p[0], p[1] - 1, p[2]) }
+  function keyOf(date) { return date.getFullYear() + '-' + pad(date.getMonth() + 1) + '-' + pad(date.getDate()) }
+  function addDays(key, delta) { var d = parseKey(key); d.setDate(d.getDate() + delta); return keyOf(d) }
+  function weekdayOf(key) { return (parseKey(key).getDay() + 6) % 7 }
+  function monthDay(key) { var p = key.split('-').map(Number); return p[1] + '月' + p[2] + '日' }
+  function shortDate(key) { var p = key.split('-').map(Number); return pad(p[1]) + '-' + pad(p[2]) }
+  function fmtW(value) {
+    var n = Number(value)
+    if (!isFinite(n)) return ''
+    return Number.isInteger(n) ? String(n) : String(Math.round(n * 10) / 10)
+  }
+  function fmtDuration(minutes) {
+    var n = Number(minutes)
+    if (!isFinite(n) || n <= 0) return '—'
+    var h = Math.floor(n / 60)
+    var m = Math.round(n % 60)
+    if (!h) return m + 'm'
+    return h + 'h' + (m ? pad(m) + 'm' : '')
+  }
+  function levelOf(day) {
+    if (!day) return 0
+    var n = Number(day.intensity)
+    return isFinite(n) ? Math.max(0, Math.min(3, n)) : 0
+  }
+  function isEstimated(day) {
+    return Boolean(day && (day.intensitySource === 'estimated' || day.intensityEstimated))
+  }
+  function dayHasWorkout(day) { return Boolean(day && day.workouts && day.workouts.length) }
+
+  function exerciseShort(ex) {
+    var sets = Number(ex.sets) || 0
+    var reps = Number(ex.reps) || 0
+    if (ex.assistKg !== null && ex.assistKg !== undefined) {
+      var bw = ex.bodyweightKg
+      var eff = bw !== null && bw !== undefined ? Math.max(0, Number(bw) - Number(ex.assistKg)) : null
+      return (eff !== null ? fmtW(eff) + 'kg × ' : '') + reps + '×' + sets
+    }
+    if (ex.weightKg !== null && ex.weightKg !== undefined) return fmtW(ex.weightKg) + 'kg × ' + reps + '×' + sets
+    return reps + '×' + sets
+  }
+  function exerciseDetail(ex) {
+    var sets = Number(ex.sets) || 0
+    var reps = Number(ex.reps) || 0
+    if (ex.assistKg !== null && ex.assistKg !== undefined) {
+      var bw = ex.bodyweightKg
+      var eff = bw !== null && bw !== undefined ? Math.max(0, Number(bw) - Number(ex.assistKg)) : null
+      var main = (eff !== null ? '等效 ' + fmtW(eff) + 'kg × ' : '') + reps + '次 × ' + sets + '组'
+      return main + ' <span class="muted">（辅助 ' + fmtW(ex.assistKg) + (bw !== null && bw !== undefined ? ' / 自重 ' + fmtW(bw) : '') + '）</span>'
+    }
+    if (ex.weightKg !== null && ex.weightKg !== undefined) return fmtW(ex.weightKg) + 'kg × ' + reps + '次 × ' + sets + '组'
+    return reps + '次 × ' + sets + '组'
+  }
+
+  // ---------------------------------------------------------------------
+  // 读数据
+  // ---------------------------------------------------------------------
+  async function load(manual) {
+    if (state.loading) return
+    state.loading = true
+    var btn = document.getElementById('refresh')
+    if (manual) btn.classList.add('spin')
+    try {
+      var res = await fetch(API, { cache: 'no-store' })
+      if (!res.ok) throw new Error('HTTP ' + res.status)
+      var snap = await res.json()
+      if (!snap || !snap.ok) throw new Error((snap && snap.error) || '读取失败')
+      state.snap = snap
+      state.byDate = {}
+      for (var i = 0; i < snap.days.length; i++) state.byDate[snap.days[i].date] = snap.days[i]
+      render()
+    } catch (err) {
+      renderError(err)
+    } finally {
+      state.loading = false
+      btn.classList.remove('spin')
+    }
+  }
+
+  function renderError(err) {
+    document.getElementById('today-line').textContent = '读取失败：' + (err && err.message ? err.message : err)
+    document.getElementById('sleep').innerHTML = '<div class="empty-state"><b>没读到数据</b>稍后点右上角刷新试试。</div>'
+    document.getElementById('heat').innerHTML = ''
+    document.getElementById('recent').innerHTML = ''
+    document.getElementById('prs').innerHTML = ''
+  }
+
+  // ---------------------------------------------------------------------
+  // 渲染
+  // ---------------------------------------------------------------------
+  function render() {
+    var snap = state.snap
+    var today = snap.today
+    document.getElementById('today-line').textContent =
+      today.split('-')[0] + '年' + monthDay(today) + ' ' + WEEK[weekdayOf(today)] +
+      (snap.stats.totalDays ? ' · 已记录 ' + snap.stats.totalDays + ' 天' : '')
+    renderStats()
+    renderSleep()
+    renderHeat()
+    renderRecent()
+    renderPRs()
+    document.getElementById('foot-right').textContent =
+      '只读页面 · 最后更新 ' + new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })
+  }
+
+  function renderStats() {
+    var s = state.snap.stats
+    var items = [
+      [s.weekDays + ' 天', '本周训练'],
+      [s.streak + ' 天', '连续'],
+      [s.weekMinutes ? fmtDuration(s.weekMinutes) : '—', '本周时长'],
+      [s.actions + ' 个', '动作在册'],
+    ]
+    document.getElementById('stats').innerHTML = items.map(function (item) {
+      return '<div class="stat"><b class="num">' + esc(item[0]) + '</b><span>' + esc(item[1]) + '</span></div>'
+    }).join('')
+  }
+
+  function renderSleep() {
+    var today = state.snap.today
+    var day = null
+    for (var i = 0; i < 7; i++) {
+      var candidate = state.byDate[addDays(today, -i)]
+      if (candidate && candidate.sleep && candidate.sleep.durationMin) { day = candidate; break }
+    }
+
+    var el = document.getElementById('sleep')
+    if (!day) {
+      el.innerHTML = head('昨晚的睡眠', '') +
+        '<div class="empty-state"><b>还没有睡眠记录</b>跟我说一句「昨晚睡了多久、深睡浅睡多少」就记上了。</div>'
+      return
+    }
+
+    var sleep = day.sleep
+    var duration = Number(sleep.durationMin) || 0
+    var rem = Number(sleep.remMin) || 0
+    var light = Number(sleep.lightMin) || 0
+    var deep = Number(sleep.deepMin) || 0
+    var awake = Number(sleep.awakeMin) || 0
+    var totalStages = rem + light + deep + awake
+    var base = Math.max(duration || 0, totalStages || 0) || 1
+    var pieces = [
+      ['deep', '深睡', deep],
+      ['light', '浅睡', light],
+      ['rem', '快速眼动', rem],
+      ['awake', '清醒', awake],
+    ]
+    var bar = ''
+    var legend = ''
+    pieces.forEach(function (p) {
+      var minutes = p[2]
+      if (!minutes) return
+      var pct = Math.round((minutes / base) * 100)
+      bar += '<i class="' + p[0] + '" style="width:' + Math.max(2, (minutes / base) * 100) + '%"></i>'
+      legend += '<span><i style="background:var(--' + p[0] + ')"></i>' + p[1] + ' <b>' + fmtDuration(minutes) + '</b> ' + pct + '%</span>'
+    })
+
+    var quality = Number(sleep.quality) || 0
+    var stars = ''
+    for (var s = 1; s <= 5; s++) stars += '<span class="' + (s <= quality ? '' : 'off') + '">★</span>'
+
+    var nights = ''
+    for (var n = 6; n >= 0; n--) {
+      var key = addDays(today, -n)
+      var d = state.byDate[key]
+      var mins = d && d.sleep && d.sleep.durationMin ? Number(d.sleep.durationMin) : 0
+      var h = mins ? Math.max(6, Math.min(40, (mins / 540) * 40)) : 0
+      nights += '<div class="night' + (key === today ? ' today' : '') + '">' +
+        '<div class="bar"><i style="height:' + h + 'px"></i></div>' +
+        '<div class="lab">' + WEEK_SHORT[weekdayOf(key)] + '</div>' +
+        '</div>'
+    }
+
+    var when = monthDay(day.date) + (sleep.bedAt && sleep.wakeAt ? ' · ' + esc(sleep.bedAt) + ' → ' + esc(sleep.wakeAt) : '')
+    el.innerHTML = head('昨晚的睡眠', when) +
+      '<div class="sleep-top">' +
+        '<div class="sleep-big num">' + fmtDuration(duration) + (sleep.awakeCount ? '<small>醒 ' + sleep.awakeCount + ' 次</small>' : '') + '</div>' +
+        '<div class="sleep-meta"><div class="stars" aria-label="睡眠质量 ' + quality + ' 星">' + stars + '</div><div class="quality">' + QUALITY[quality] + '</div></div>' +
+      '</div>' +
+      (bar ? '<div class="sleep-bar" aria-hidden="true">' + bar + '</div><div class="legend">' + legend + '</div>' : '') +
+      '<div class="nights-title">近 7 晚</div>' +
+      '<div class="nights" aria-label="近七晚睡眠">' + nights + '</div>'
+  }
+
+  function head(title, sub) {
+    return '<div class="card-head"><h2>' + esc(title) + '</h2><span class="sub">' + esc(sub) + '</span></div>'
+  }
+
+  function renderHeat() {
+    var today = state.snap.today
+    var end = parseKey(today)
+    var start = parseKey(today)
+    var wd = (start.getDay() + 6) % 7
+    start.setDate(start.getDate() - wd - 12 * 7)
+
+    var cells = ''
+    var monthLabels = []
+    var lastMonth = -1
+    for (var week = 0; week < 13; week++) {
+      var monday = new Date(start.getTime())
+      monday.setDate(monday.getDate() + week * 7)
+      var m = monday.getMonth() + 1
+      monthLabels.push(m !== lastMonth ? m + '月' : '')
+      lastMonth = m
+      for (var row = 0; row < 7; row++) {
+        var d = new Date(start.getTime())
+        d.setDate(d.getDate() + week * 7 + row)
+        if (d > end) { cells += '<span class="cell void"></span>'; continue }
+        var key = keyOf(d)
+        var day = state.byDate[key]
+        var level = levelOf(day)
+        cells += '<span class="cell l' + level + (key === today ? ' today' : '') + '" data-day="' + key + '" tabindex="0" role="button" aria-label="' + monthDay(key) + ' ' + LEVEL[level] + '"></span>'
+      }
+    }
+
+    var legend = '<div class="heat-legend">' +
+      '<span><i style="background:var(--l0)"></i>休息</span>' +
+      '<span><i style="background:var(--l1)"></i>低</span>' +
+      '<span><i style="background:var(--l2)"></i>中</span>' +
+      '<span><i style="background:var(--l3)"></i>高</span>' +
+      '</div>'
+
+    var first = keyOf(start)
+    document.getElementById('heat').innerHTML =
+      head('最近三个月', monthDay(first) + ' — ' + monthDay(today)) +
+      '<div class="heat-scroll"><div class="heat-inner">' +
+        '<div class="months">' + monthLabels.map(function (m) { return '<span>' + m + '</span>' }).join('') + '</div>' +
+        '<div class="heat-body"><div class="weekdays">' + WEEK_SHORT.map(function (w) { return '<span>' + w + '</span>' }).join('') + '</div>' +
+        '<div class="heat-grid">' + cells + '</div></div>' +
+      '</div></div>' +
+      '<div class="heat-foot"><span class="muted" style="font-size:11px">点一个方块看那天的细节</span>' + legend + '</div>'
+  }
+
+  function renderRecent() {
+    var today = state.snap.today
+    var names = ['今天', '昨天', '前天']
+    var cards = ''
+    for (var i = 0; i < 3; i++) {
+      var key = addDays(today, -i)
+      var day = state.byDate[key]
+      var level = levelOf(day)
+      var recorded = Boolean(day)
+      var chip = '<span class="chip l' + level + '">' + (recorded ? LEVEL[level] + (isEstimated(day) ? '（估）' : '') : '未记录') + '</span>'
+
+      var body = ''
+      if (dayHasWorkout(day)) {
+        body = day.workouts.map(function (w) {
+          var minutes = w.minutes ? ' · ' + w.minutes + ' 分钟' : ''
+          var rows = (w.exercises || []).slice(0, 4).map(function (ex) {
+            return '<div class="exercise"><span class="m">' + esc(ex.movement) + '</span><span class="v">' + esc(exerciseShort(ex)) + '</span></div>'
+          }).join('')
+          var more = (w.exercises || []).length > 4 ? '<div class="day-note">还有 ' + ((w.exercises.length) - 4) + ' 个动作</div>' : ''
+          return '<div class="workout-name"><span>' + esc(w.name) + '</span><span>' + esc(minutes) + '</span></div>' + rows + more
+        }).join('')
+      } else if (day && day.sleep) {
+        body = '<div class="rest">休息 · 睡了 ' + fmtDuration(day.sleep.durationMin) + '</div>'
+      } else if (i === 0) {
+        body = '<div class="rest">今天还没记录，在对话里说一声就行</div>'
+      } else {
+        body = '<div class="rest">这天没有记录</div>'
+      }
+
+      cards += '<div class="day' + (dayHasWorkout(day) || day ? '' : ' empty') + '" data-day="' + key + '" role="button" tabindex="0" aria-label="' + monthDay(key) + '">' +
+        '<div class="day-top"><div><span class="day-name">' + names[i] + '</span><span class="day-date num">' + shortDate(key) + '</span></div>' + chip + '</div>' +
+        body + '</div>'
+    }
+    document.getElementById('recent').innerHTML = head('最近三天', '') + '<div class="days">' + cards + '</div>'
+  }
+
+  function renderPRs() {
+    var prs = state.snap.prs || []
+    var el = document.getElementById('prs')
+    if (!prs.length) {
+      el.innerHTML = head('最佳表现', '') + '<div class="empty-state"><b>还没有可比较的动作</b>记一次带重量和次数的训练，这里就会长出最佳。</div>'
+      return
+    }
+
+    var shown = state.showAllPrs ? prs : prs.slice(0, 6)
+    var rows = shown.map(function (pr) {
+      var best = pr.best
+      var main = ''
+      var sub = ''
+      if (best.assistKg !== null && best.assistKg !== undefined) {
+        var eff = best.bodyweightKg !== null && best.bodyweightKg !== undefined ? Math.max(0, Number(best.bodyweightKg) - Number(best.assistKg)) : null
+        main = (eff !== null ? fmtW(eff) + 'kg × ' : '') + best.reps + ' × ' + best.sets + '组'
+        sub = '辅助 ' + fmtW(best.assistKg) + (best.bodyweightKg !== null && best.bodyweightKg !== undefined ? ' / 自重 ' + fmtW(best.bodyweightKg) : '')
+      } else if (best.weightKg !== null && best.weightKg !== undefined) {
+        main = fmtW(best.weightKg) + 'kg × ' + best.reps + ' × ' + best.sets + '组'
+        sub = best.e1rm ? '等效 ' + (Math.round(best.e1rm * 10) / 10) + 'kg' : ''
+      } else {
+        main = best.reps + ' × ' + best.sets + '组'
+      }
+
+      var latest = pr.latest
+      var latestText = ''
+      if (latest.assistKg !== null && latest.assistKg !== undefined) {
+        latestText = '辅助 ' + fmtW(latest.assistKg) + ' × ' + latest.reps + '×' + latest.sets
+      } else if (latest.weightKg !== null && latest.weightKg !== undefined) {
+        latestText = fmtW(latest.weightKg) + 'kg × ' + latest.reps + '×' + latest.sets
+      } else {
+        latestText = latest.reps + '×' + latest.sets
+      }
+
+      var delta = '<span class="delta">首次</span>'
+      if (pr.priorBest) {
+        if (pr.deltaUnit === 'assist') {
+          var diff = Number(pr.delta) || 0
+          if (diff > 0.01) delta = '<span class="delta up">辅助少 ' + fmtW(diff) + 'kg</span>'
+          else if (diff < -0.01) delta = '<span class="delta down">辅助多 ' + fmtW(-diff) + 'kg</span>'
+          else delta = '<span class="delta">持平</span>'
+        } else if (pr.delta !== null && pr.delta !== undefined) {
+          var d = Number(pr.delta)
+          if (d > 0.05) delta = '<span class="delta up">↑ ' + d.toFixed(1) + 'kg</span>'
+          else if (d < -0.05) delta = '<span class="delta down">↓ ' + Math.abs(d).toFixed(1) + 'kg</span>'
+          else delta = '<span class="delta">持平</span>'
+        }
+      }
+
+      return '<tr>' +
+        '<td class="mv">' + esc(pr.movement) + '</td>' +
+        '<td><div class="set num">' + esc(main) + '</div>' + (sub ? '<div class="sub">' + esc(sub) + '</div>' : '') + '</td>' +
+        '<td class="date">' + shortDate(best.date) + '</td>' +
+        '<td class="hide-sm"><div class="set num">' + esc(latestText) + '</div><div class="sub">' + shortDate(latest.date) + '</div></td>' +
+        '<td>' + delta + '</td>' +
+      '</tr>'
+    }).join('')
+
+    var more = prs.length > 6
+      ? '<div class="more"><button class="link-btn" id="toggle-prs" type="button">' + (state.showAllPrs ? '收起来' : '展开全部 ' + prs.length + ' 个动作') + '</button></div>'
+      : ''
+
+    el.innerHTML = head('最佳表现', '按最近练的排序') +
+      '<table class="pr"><thead><tr><th>动作</th><th>最佳</th><th>达成</th><th class="hide-sm">最近一次</th><th>变化</th></tr></thead><tbody>' + rows + '</tbody></table>' + more
+
+    var toggle = document.getElementById('toggle-prs')
+    if (toggle) toggle.addEventListener('click', function () { state.showAllPrs = !state.showAllPrs; renderPRs() })
+  }
+
+  // ---------------------------------------------------------------------
+  // 提示与详情
+  // ---------------------------------------------------------------------
+  function dayTip(key) {
+    var d = state.byDate[key]
+    if (!d) return monthDay(key) + ' ' + WEEK[weekdayOf(key)] + '<br>没有记录'
+    var lines = [monthDay(key) + ' ' + WEEK[weekdayOf(key)] + ' · ' + LEVEL[levelOf(d)] + (isEstimated(d) ? '（估）' : '')]
+    if (d.sleep && d.sleep.durationMin) lines.push('睡眠 ' + fmtDuration(d.sleep.durationMin))
+    if (dayHasWorkout(d)) {
+      var names = d.workouts.map(function (w) { return esc(w.name) + (w.minutes ? ' ' + w.minutes + 'm' : '') })
+      lines.push(names.join('、'))
+    }
+    return lines.join('<br>')
+  }
+
+  function showTip(event, key) {
+    tip.innerHTML = dayTip(key)
+    tip.classList.add('show')
+    moveTip(event)
+  }
+  function moveTip(event) {
+    var x = event.clientX + 14
+    var y = event.clientY + 14
+    var w = tip.offsetWidth || 200
+    var h = tip.offsetHeight || 60
+    if (x + w > window.innerWidth - 8) x = event.clientX - w - 14
+    if (y + h > window.innerHeight - 8) y = event.clientY - h - 14
+    tip.style.left = Math.max(8, x) + 'px'
+    tip.style.top = Math.max(8, y) + 'px'
+  }
+  function hideTip() { tip.classList.remove('show') }
+
+  function openDay(key) {
+    var d = state.byDate[key]
+    var html = '<div class="modal-head"><div><h3>' + monthDay(key) + ' · ' + WEEK[weekdayOf(key)] + '</h3><p>' +
+      (d ? LEVEL[levelOf(d)] + (isEstimated(d) ? '（估）' : '') : '没有记录') + '</p></div>' +
+      '<button class="icon-btn" id="modal-close" type="button" aria-label="关闭">×</button></div>'
+
+    if (!d) {
+      html += '<div class="empty-state">这一天还没有记录。</div>'
+    } else {
+      if (d.sleep) {
+        var sleep = d.sleep
+        var pieces = ''
+        var stageSum = (Number(sleep.remMin) || 0) + (Number(sleep.lightMin) || 0) + (Number(sleep.deepMin) || 0) + (Number(sleep.awakeMin) || 0)
+        var showTotal = Number(sleep.durationMin) || stageSum || 0
+        var total = Math.max(showTotal, stageSum) || 1
+        var stages = [['deep', '深睡', Number(sleep.deepMin) || 0], ['light', '浅睡', Number(sleep.lightMin) || 0], ['rem', '快速眼动', Number(sleep.remMin) || 0], ['awake', '清醒', Number(sleep.awakeMin) || 0]]
+        stages.forEach(function (p) {
+          if (!p[2]) return
+          pieces += '<i class="' + p[0] + '" style="width:' + Math.max(2, (p[2] / total) * 100) + '%"></i>'
+        })
+        html += '<section><h4>睡眠</h4><div class="sleep-top"><div class="sleep-big num">' + fmtDuration(showTotal) + '</div>' +
+          '<div class="sleep-meta"><div class="stars">' + Array.from({ length: 5 }, function (_, i) { return '<span class="' + (i < (Number(sleep.quality) || 0) ? '' : 'off') + '">★</span>' }).join('') + '</div>' +
+          '<div class="quality">' + QUALITY[Number(sleep.quality) || 0] + (sleep.awakeCount ? ' · 醒 ' + sleep.awakeCount + ' 次' : '') + '</div></div></div>' +
+          (pieces ? '<div class="sleep-bar" aria-hidden="true">' + pieces + '</div>' : '') +
+          '<div class="legend">' + stages.filter(function (p) { return p[2] }).map(function (p) { return '<span><i style="background:var(--' + p[0] + ')"></i>' + p[1] + ' <b>' + fmtDuration(p[2]) + '</b></span>' }).join('') + '</div></section>'
+      }
+      if (dayHasWorkout(d)) {
+        html += d.workouts.map(function (w) {
+          var rows = (w.exercises || []).map(function (ex) {
+            return '<div class="ex-row"><span>' + esc(ex.movement) + '</span><span class="v">' + exerciseDetail(ex) + '</span></div>'
+          }).join('')
+          return '<section><h4>' + esc(w.name) + (w.minutes ? ' · ' + w.minutes + ' 分钟' : '') + '</h4>' + (rows || '<div class="rest">没有分动作</div>') + '</section>'
+        }).join('')
+      }
+      if (d.note) html += '<section><h4>备注</h4><div class="muted">' + esc(d.note) + '</div></section>'
+    }
+
+    modalBox.innerHTML = html
+    modal.hidden = false
+    document.body.style.overflow = 'hidden'
+    var close = document.getElementById('modal-close')
+    if (close) close.addEventListener('click', closeModal)
+  }
+  function closeModal() { modal.hidden = true; document.body.style.overflow = '' }
+
+  // ---------------------------------------------------------------------
+  // 事件
+  // ---------------------------------------------------------------------
+  document.addEventListener('click', function (event) {
+    var target = event.target.closest ? event.target.closest('[data-day]') : null
+    if (target) {
+      hideTip()
+      openDay(target.getAttribute('data-day'))
+      return
+    }
+    if (event.target === modal) closeModal()
+  })
+
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape' && !modal.hidden) closeModal()
+    var target = event.target
+    if ((event.key === 'Enter' || event.key === ' ') && target && target.getAttribute && target.getAttribute('data-day')) {
+      event.preventDefault()
+      openDay(target.getAttribute('data-day'))
+    }
+  })
+
+  document.addEventListener('mouseover', function (event) {
+    var cell = event.target.closest ? event.target.closest('.cell[data-day]') : null
+    if (cell) showTip(event, cell.getAttribute('data-day'))
+  })
+  document.addEventListener('mousemove', function (event) {
+    if (tip.classList.contains('show')) moveTip(event)
+  })
+  document.addEventListener('mouseout', function (event) {
+    var cell = event.target.closest ? event.target.closest('.cell[data-day]') : null
+    if (cell) hideTip()
+  })
+  window.addEventListener('scroll', hideTip, { passive: true })
+
+  // 主题
+  var THEMES = ['auto', 'light', 'dark']
+  var THEME_ICON = { auto: '◐', light: '☀', dark: '☾' }
+  function applyTheme() {
+    var theme = localStorage.getItem('wangfeng-theme') || 'auto'
+    if (THEMES.indexOf(theme) < 0) theme = 'auto'
+    document.documentElement.setAttribute('data-theme', theme)
+    document.getElementById('theme').textContent = THEME_ICON[theme]
+    document.getElementById('theme').title = '配色：' + (theme === 'auto' ? '跟随系统' : theme === 'light' ? '浅色' : '深色')
+  }
+  document.getElementById('theme').addEventListener('click', function () {
+    var current = localStorage.getItem('wangfeng-theme') || 'auto'
+    var next = THEMES[(THEMES.indexOf(current) + 1) % THEMES.length]
+    localStorage.setItem('wangfeng-theme', next)
+    applyTheme()
+  })
+
+  document.getElementById('refresh').addEventListener('click', function () { load(true) })
+
+  applyTheme()
+  load(false)
+  setInterval(function () { if (!document.hidden) load(false) }, 60000)
+})()
+</script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+# 望峰（Ascent）—— 挂载声明
+# 数据默认在 ~/.dsh/wangfeng/，不放在插件目录，插件整个换掉数据也活着。
+- insert:
+    - id: wangfeng
+      name: 'dsh-wangfeng'
+      config:
+        cutoffHour: 4
